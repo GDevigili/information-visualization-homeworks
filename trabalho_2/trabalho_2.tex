@@ -1,0 +1,793 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{trabalho\_2}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{visualizauxe7uxe3o-da-informauxe7uxe3o}{%
+\section{Visualização da
+Informação}\label{visualizauxe7uxe3o-da-informauxe7uxe3o}}
+
+\hypertarget{escola-de-matemuxe1tica-aplicada---fundauxe7uxe3o-getuxfalio-vargas}{%
+\subsection{Escola de Matemática Aplicada - Fundação Getúlio
+Vargas}\label{escola-de-matemuxe1tica-aplicada---fundauxe7uxe3o-getuxfalio-vargas}}
+
+\hypertarget{mestrado-em-modelagem-matemuxe1tica}{%
+\subsection{Mestrado em Modelagem
+Matemática}\label{mestrado-em-modelagem-matemuxe1tica}}
+
+Aluno: Gianlucca Devigili Github do projeto:
+https://github.com/GDevigili/information-visualization-homeworks
+
+\hypertarget{trabalho-2-anuxe1lise-e-reproduuxe7uxe3o-de-uma-visualizauxe7uxe3o-reconhecida-ou-relevante-historicamente}{%
+\subsection{Trabalho 2: Análise e reprodução de uma visualização
+reconhecida ou relevante
+historicamente}\label{trabalho-2-anuxe1lise-e-reproduuxe7uxe3o-de-uma-visualizauxe7uxe3o-reconhecida-ou-relevante-historicamente}}
+
+\begin{itemize}
+\tightlist
+\item
+  Parte1: Encontrar os dados (compartilhar referências de dados no
+  slack)
+\item
+  Parte2: Fazer uma análise de qual seria a função pretendida com a
+  visualização proposta.
+\item
+  Parte3: Fazer uma reprodução da visualização escolhida utilizando uma
+  ferramenta computacional atual (de preferência a mesma escolhida por
+  vocês no trabalho 1)
+\item
+  Parte4: Propor alguma modificação (fundamentando conceitualmente) na
+  visualização proposta. Exemplo: Incluir anotação, incluir
+  interatividade, modificar título ou legenda, adicionar informação,
+  etc.
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{altair} \PY{k}{as} \PY{n+nn}{alt}
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{express} \PY{k}{as} \PY{n+nn}{px}
+\PY{k+kn}{from} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{subplots} \PY{k+kn}{import} \PY{n}{make\PYZus{}subplots}
+
+\PY{k+kn}{import} \PY{n+nn}{vega\PYZus{}datasets}
+
+\PY{k+kn}{from} \PY{n+nn}{altair\PYZus{}saver} \PY{k+kn}{import} \PY{n}{save}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A visualização escolhida foi a de \textbf{Florence Nightingale}
+referente às \textbf{causas de morte na guerra da Crimeia} (1853-1856)
+
+    \includegraphics{https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2015/05/30154347/Nightingale\%E2\%80\%99s-diagram-1.jpg}
+
+    \hypertarget{aquisiuxe7uxe3o-dos-dados}{%
+\subsection{(1) Aquisição dos dados}\label{aquisiuxe7uxe3o-dos-dados}}
+
+Para importar os dados, utilizei a biblioteca \texttt{vega\_datasets}.
+Inicialmente eu havia realizado um web-scrapping dos dados
+(\href{\%5Bhttps://github.com/GDevigili/information-visualization-homeworks/commit/a2c97beb6c5c5f1e174c854f094720b09437893a\#diff-f485367de3abdc640726199ca3360f1fdfc1043bf3abdde1ecf95faa3556adf2}{como
+pode ser visto neste commit}), porém ao plotar o gráfico percebi que os
+dados da fonte que eu peguei estavam errados e não reproduziam o gráfico
+de Nightingale, então preferi usar a biblioteca.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Carrega os dados}
+\PY{n}{df\PYZus{}crimea} \PY{o}{=} \PY{n}{vega\PYZus{}datasets}\PY{o}{.}\PY{n}{data}\PY{o}{.}\PY{n}{crimea}\PY{p}{(}\PY{p}{)}
+\PY{n}{df\PYZus{}crimea}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+         date  wounds  other  disease
+0  1854-04-01       0    110      110
+1  1854-05-01       0     95      105
+2  1854-06-01       0     40       95
+3  1854-07-01       0    140      520
+4  1854-08-01      20    150      800
+5  1854-09-01     220    230      740
+6  1854-10-01     305    310      600
+7  1854-11-01     480    290      820
+8  1854-12-01     295    310     1100
+9  1855-01-01     230    460     1440
+10 1855-02-01     180    520     1270
+11 1855-03-01     155    350      935
+12 1855-04-01     195    195      560
+13 1855-05-01     180    155      550
+14 1855-06-01     330    130      650
+15 1855-07-01     260    130      430
+16 1855-08-01     290    110      490
+17 1855-09-01     355    100      290
+18 1855-10-01     135     95      245
+19 1855-11-01     100    140      325
+20 1855-12-01      40    120      215
+21 1856-01-01       0    160      160
+22 1856-02-01       0    100      100
+23 1856-03-01       0    125       90
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{preparauxe7uxe3o-dos-dados}{%
+\subsubsection{Preparação dos dados}\label{preparauxe7uxe3o-dos-dados}}
+
+    Para reproduzir o gráfico, precisamos dividi os dados em dois intervalos
+de tempo, sendo o primeiro indo de abril de 1854 até março de 1855 e o
+segundo de abril de 1855 até março de 1856. Após isso, usei o método
+\texttt{pd.melt} para transformar o dataset de modo que ele tenha 3
+colunas: \texttt{Date}, \texttt{Death} e \texttt{Cause}. Os dados então
+ficam da maneira apresentada abaixo:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{causes} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{other}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{wounds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{disease}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Transforma o dataset completo em um dataset melted}
+\PY{n}{df\PYZus{}melted} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{melt}\PY{p}{(}
+        \PY{n}{df\PYZus{}crimea}\PY{p}{,} 
+        \PY{n}{id\PYZus{}vars} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{value\PYZus{}vars} \PY{o}{=} \PY{n}{causes}\PY{p}{,}
+        \PY{n}{var\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{value\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}
+        \PY{p}{)}
+
+
+\PY{c+c1}{\PYZsh{} Formata a data no formato \PYZsq{}Apr 1854\PYZsq{}}
+\PY{n}{df\PYZus{}crimea}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n}{date}\PY{o}{.}\PY{n}{strftime}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{b }\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{for} \PY{n}{date} \PY{o+ow}{in} \PY{n}{df\PYZus{}crimea}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Cria um dataset para cada período de 12 mesmos}
+\PY{n}{df1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{melt}\PY{p}{(}
+        \PY{n}{df\PYZus{}crimea}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{12}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{id\PYZus{}vars} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{value\PYZus{}vars} \PY{o}{=} \PY{n}{causes}\PY{p}{,}
+        \PY{n}{var\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{value\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}
+        \PY{p}{)}
+\PY{n}{df2} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{melt}\PY{p}{(}
+        \PY{n}{df\PYZus{}crimea}\PY{p}{[}\PY{l+m+mi}{12}\PY{p}{:}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{id\PYZus{}vars} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{value\PYZus{}vars} \PY{o}{=} \PY{n}{causes}\PY{p}{,}
+        \PY{n}{var\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{value\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}
+        \PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Remove o dia do dataset melted}
+\PY{n}{df\PYZus{}melted}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n}{date}\PY{o}{.}\PY{n}{strftime}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y\PYZhy{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{for} \PY{n}{date} \PY{o+ow}{in} \PY{n}{df\PYZus{}melted}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Apresenta o dataset}
+\PY{n}{df\PYZus{}melted}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+      date  cause  deaths
+0  1854-04  other     110
+1  1854-05  other      95
+2  1854-06  other      40
+3  1854-07  other     140
+4  1854-08  other     150
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{anuxe1lise-da-funuxe7uxe3o-da-visualizauxe7uxe3o}{%
+\subsection{(2) Análise da Função da
+Visualização}\label{anuxe1lise-da-funuxe7uxe3o-da-visualizauxe7uxe3o}}
+
+Florence era uma enfermeira que atuou na Guerra da Criméia. A
+visualização que ela propôs tinah o intuito de evidenciar que a maior
+causa de morte entre seus pacientes era por doenças contraídas no campo
+de guerra, e não pelos ferimentos decorridos da mesma. A visualização
+teve grande contribuição para a aplicação de condições sanitárias
+melhores nos campos de batalha e hospitais, tendo uma melhora
+significativa no segundo ano.
+
+    \hypertarget{reproduuxe7uxe3o-da-visualizauxe7uxe3o}{%
+\subsection{(3) Reprodução da
+Visualização}\label{reproduuxe7uxe3o-da-visualizauxe7uxe3o}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{colors} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}CF8275}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}524946}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}8eb5d1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{n}{fig1} \PY{o}{=} \PY{n}{px}\PY{o}{.}\PY{n}{bar\PYZus{}polar}\PY{p}{(}
+    \PY{n}{df1}\PY{p}{,} 
+    \PY{n}{r} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{color} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+    \PY{n}{theta} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{start\PYZus{}angle} \PY{o}{=} \PY{l+m+mi}{165}\PY{p}{,}
+    \PY{n}{color\PYZus{}discrete\PYZus{}sequence} \PY{o}{=} \PY{n}{colors}\PY{p}{,}
+    \PY{n}{template} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{simple\PYZus{}white}\PY{l+s+s1}{\PYZsq{}}
+\PY{p}{)}
+
+\PY{n}{fig1}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{fig2} \PY{o}{=} \PY{n}{px}\PY{o}{.}\PY{n}{bar\PYZus{}polar}\PY{p}{(}
+    \PY{n}{df2}\PY{p}{,} 
+    \PY{n}{r} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{color} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+    \PY{n}{theta} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{start\PYZus{}angle} \PY{o}{=} \PY{l+m+mi}{165}\PY{p}{,}
+    \PY{n}{color\PYZus{}discrete\PYZus{}sequence} \PY{o}{=} \PY{n}{colors}\PY{p}{,}
+    \PY{n}{template} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{simple\PYZus{}white}\PY{l+s+s1}{\PYZsq{}}
+\PY{p}{)}
+
+\PY{n}{fig2}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+    
+    
+    
+    
+    Optei por não reproduzir os gráficos tal quais a visualização original
+em alguns detalhes, como a inversão da ordem das causas em meses
+específicos, pois além de dificuldade adicional da programação, tais
+detalhes não contribuem tanto na compreensão da visualização em si.
+
+    \hypertarget{modificauxe7uxf5es-propostas}{%
+\subsection{(4) Modificações
+Propostas}\label{modificauxe7uxf5es-propostas}}
+
+O tipo de visualização escolhida por Nightingale, apesar de muito
+agradável visualmente, não consegue representar com precisão os dados,
+por exemplo, se invertermos a ordem dos dados o gráfico, parece que
+trocamos os valores numéricos dele:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{causes}\PY{o}{.}\PY{n}{reverse}\PY{p}{(}\PY{p}{)}
+\PY{n}{colors}\PY{o}{.}\PY{n}{reverse}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{df\PYZus{}aux} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{melt}\PY{p}{(}
+        \PY{n}{df\PYZus{}crimea}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{12}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{id\PYZus{}vars} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{value\PYZus{}vars} \PY{o}{=} \PY{n}{causes}\PY{p}{,}
+        \PY{n}{var\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{value\PYZus{}name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}
+        \PY{p}{)}
+
+\PY{n}{fig1} \PY{o}{=} \PY{n}{px}\PY{o}{.}\PY{n}{bar\PYZus{}polar}\PY{p}{(}
+    \PY{n}{df\PYZus{}aux}\PY{p}{,} 
+    \PY{n}{r} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{color} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+    \PY{n}{theta} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{start\PYZus{}angle} \PY{o}{=} \PY{l+m+mi}{165}\PY{p}{,}
+    \PY{n}{color\PYZus{}discrete\PYZus{}sequence} \PY{o}{=} \PY{n}{colors}\PY{p}{,}
+    \PY{n}{template} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{simple\PYZus{}white}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{width} \PY{o}{=} \PY{l+m+mi}{800}\PY{p}{,} \PY{n}{height} \PY{o}{=} \PY{l+m+mi}{400}
+\PY{p}{)}
+
+\PY{n}{fig1}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+    Além disso, os meses que tem valores pequenos, como abril, maio e junho
+de 1854, são quase que invisíveis no gráfico.
+
+Uma modificação possível seria trocar o gráfico de barras em coordenadas
+polares por um gráfico de barras comum:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{71}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{scale} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Scale}\PY{p}{(}\PY{n}{domain} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{disease}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{wounds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{other}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n+nb}{range} \PY{o}{=} \PY{n}{colors}\PY{p}{)}
+\PY{n}{color} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Color}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{scale} \PY{o}{=} \PY{n}{scale}\PY{p}{)}
+
+\PY{n}{bar1} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Chart}\PY{p}{(}\PY{n}{df\PYZus{}melted}\PY{p}{)}\PY{o}{.}\PY{n}{mark\PYZus{}bar}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{encode}\PY{p}{(}
+    \PY{n}{x} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{y} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{color} \PY{o}{=} \PY{n}{color}
+\PY{p}{)}\PY{o}{.}\PY{n}{properties}\PY{p}{(}\PY{n}{width} \PY{o}{=} \PY{l+m+mi}{800}\PY{p}{,} \PY{n}{height} \PY{o}{=} \PY{l+m+mi}{400}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gráfico de Barras das Causas de Morte no exército do leste (1)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{bar1}\PY{o}{.}\PY{n}{save}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bar1.html}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{bar1}\PY{o}{.}\PY{n}{display}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+alt.Chart({\ldots})
+    \end{Verbatim}
+
+    
+    Com este gráfico a análise fica mais fácil, tornando possível perceber
+que alguns meses não tem mortes por ferimentos (o que em alguns casos
+não ficava claro na versão radial) e também é possível observar a
+redução no número de mortes ao longo do tempo. Além disso optei por unir
+os dois gráficos de modo a apresentar os dados como um todo, já que a
+separação por ano não faz tanto sentido agora que a compactação dos
+dados não é um problema como no bar plot radial.
+
+Outra opção, ao invés do gráfico stacked, seria separar as barras por
+categoria para podermos observá-las separadamente:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{72}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{bar2} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Chart}\PY{p}{(}\PY{n}{df\PYZus{}melted}\PY{p}{)}\PY{o}{.}\PY{n}{mark\PYZus{}bar}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{encode}\PY{p}{(}
+    \PY{n}{x} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{y} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{column} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{color} \PY{o}{=} \PY{n}{color}
+\PY{p}{)}\PY{o}{.}\PY{n}{properties}\PY{p}{(}\PY{n}{width}\PY{o}{=}\PY{l+m+mi}{250}\PY{p}{,} \PY{n}{title} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gráfico de Barras das Causas de Morte no exército do leste (2)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{save}\PY{p}{(}\PY{n}{bar2}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar2.html}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{bar2}\PY{o}{.}\PY{n}{display}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+alt.Chart({\ldots})
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{74}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{bar3} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Chart}\PY{p}{(}\PY{n}{df\PYZus{}melted}\PY{p}{)}\PY{o}{.}\PY{n}{mark\PYZus{}bar}\PY{p}{(}
+    \PY{n}{width}\PY{o}{=}\PY{l+m+mi}{20}
+\PY{p}{)}\PY{o}{.}\PY{n}{encode}\PY{p}{(}
+    \PY{n}{x} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{X}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Axis}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{grid}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{n}{y} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{c+c1}{\PYZsh{}column = \PYZsq{}date\PYZsq{},}
+    \PY{n}{color} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Color}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cause}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{scale} \PY{o}{=} \PY{n}{scale}\PY{p}{)}
+\PY{p}{)}\PY{o}{.}\PY{n}{facet}\PY{p}{(}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{spacing} \PY{o}{=} \PY{l+m+mi}{0}
+\PY{p}{)}\PY{o}{.}\PY{n}{configure\PYZus{}axis}\PY{p}{(}
+    \PY{n}{grid}\PY{o}{=}\PY{k+kc}{False}
+\PY{p}{)}\PY{o}{.}\PY{n}{configure\PYZus{}view}\PY{p}{(}
+    \PY{n}{strokeWidth} \PY{o}{=} \PY{l+m+mi}{0}
+\PY{p}{)}\PY{o}{.}\PY{n}{properties}\PY{p}{(}\PY{n}{title} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gráfico de Barras das Causas de Morte no exército do leste (3)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{save}\PY{p}{(}\PY{n}{bar3}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bar3.html}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{bar3}\PY{o}{.}\PY{n}{display}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+alt.FacetChart({\ldots})
+    \end{Verbatim}
+
+    
+    Com as visualizações em barra, é possível entender melhor a diferença
+entre a quantidade de mortes por doença e a quantidade de mortes por
+ferimentos e outras causas, já que a distância vertical é uma métrica
+melhor para a compreensão de quantidade do que áreas e transformar as
+barras em um gráfico reto retira a ambiguidade que um gráfico radial
+(``redondo'') pode gerar como exemplificado com a troca de ordem das
+causas de morte no primeiro gráfico da sessão 3.
+
+    Para observar a mudança ao longo do tempo na quantidade de mortes, um
+gráfico de linhas seria mais adequado:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{line} \PY{o}{=} \PY{n}{alt}\PY{o}{.}\PY{n}{Chart}\PY{p}{(}\PY{n}{df\PYZus{}melted}\PY{p}{)}\PY{o}{.}\PY{n}{mark\PYZus{}line}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{encode}\PY{p}{(}
+    \PY{n}{x} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{y} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deaths}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{color} \PY{o}{=} \PY{n}{color}
+\PY{p}{)}\PY{o}{.}\PY{n}{properties}\PY{p}{(}\PY{n}{width} \PY{o}{=} \PY{l+m+mi}{800}\PY{p}{,} \PY{n}{height} \PY{o}{=} \PY{l+m+mi}{400}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gráfico de Linha das Causas de Morte no exército do leste}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{save}\PY{p}{(}\PY{n}{line}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{line.html}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{line}\PY{o}{.}\PY{n}{display}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+alt.Chart({\ldots})
+    \end{Verbatim}
+
+    
+    Este último gráfico evidencia a diminuição dramática nas mortes por
+doença depois da aplicação de melhores condições sanitárias nos
+hospitais de guerra e no campo de batalhano segundo ano, o que o gráfico
+original de Florence não mostra tão bem já que ele está ``normalizado'',
+além de ter algumas inversões na ordem das categorias.
+
+    Caso alguma imagem não tenha ficado boa no pdf ou cortada, exportei
+todas para .png e .html e upei para o meu github:
+\url{https://github.com/GDevigili/information-visualization-homeworks/tree/main/trabalho_2/png}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
